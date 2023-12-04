@@ -24,8 +24,11 @@ while getopts 'v:h' OPT; do
     esac
 done
 
-
-tomcatMainVersion=${tomcatVersion:0:1}
+if [ "${tomcatVersion:0:2}" = "10" ]; then
+    tomcatMainVersion=${tomcatVersion:0:2}
+else
+    tomcatMainVersion=${tomcatVersion:0:1}
+fi
 
 mkdir -p ${downloadSource}
 mkdir -p ${tomcatHome}
