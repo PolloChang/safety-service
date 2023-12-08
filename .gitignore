@@ -1,3 +1,6 @@
 releases
 source
 tmp
+*.tar.gz
+*.jar
+webapps

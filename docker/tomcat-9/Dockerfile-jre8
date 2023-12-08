@@ -1,0 +1,53 @@
+FROM  debian:11.8-slim
+MAINTAINER pollochang
+
+# Default to UTF-8 file.encoding
+ENV JAVA_HOME /opt/java/openjdk/
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV JAVA_VERSION_1 8u392
+ENV JAVA_VERSION_2 b08
+ENV CATALINA_HOME /usr/local/tomcat
+ENV PATH $CATALINA_HOME/bin:$PATH
+
+RUN mkdir -p ${JAVA_HOME}
+RUN mkdir -p ${CATALINA_HOME}/dump
+
+WORKDIR $CATALINA_HOME
+
+# let "Tomcat Native" live somewhere isolated
+ENV TOMCAT_NATIVE_LIBDIR $CATALINA_HOME/native-jni-lib
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$TOMCAT_NATIVE_LIBDIR
+
+
+ENV TOMCAT_MAJOR 9
+ENV TOMCAT_VERSION 9.0.83
+
+
+ADD OpenJDK8U-jre_x64_linux_hotspot_${JAVA_VERSION_1}${JAVA_VERSION_2}.tar.gz /tmp
+RUN mv /tmp/jdk${JAVA_VERSION_1}-${JAVA_VERSION_2}-jre/* ${JAVA_HOME}
+ADD safety-tomcat-${TOMCAT_VERSION}.tar.gz /tmp
+RUN mv /tmp/apache-tomcat-${TOMCAT_VERSION}/* ${CATALINA_HOME}
+RUN apt update;  \
+	apt upgrade -y; \
+  apt install -y curl; \
+  apt-get -y clean all; \
+  dpkg remove -y apt; \
+	rm -rf /var/lib/apt/lists/*;
+
+RUN groupadd -g 500 tomcat
+RUN useradd -u 500 -g 500 -s /sbin/nologin -M tomcat
+RUN groupadd -g 510 webapp && useradd -u 510 -g webapp -M -s /sbin/nologin webapp
+RUN usermod -a -G webapp tomcat
+RUN chown -R root:root ${CATALINA_HOME}
+RUN chown -R webapp:webapp ${CATALINA_HOME}/webapps
+RUN chown -R tomcat:tomcat ${CATALINA_HOME}/logs
+RUN chown -R tomcat:tomcat ${CATALINA_HOME}/temp
+RUN chown -R tomcat:tomcat ${CATALINA_HOME}/work
+RUN chown -R tomcat:tomcat ${CATALINA_HOME}/dump
+RUN chown -R tomcat:tomcat ${CATALINA_HOME}/conf
+
+USER tomcat
+
+EXPOSE 8080 8686
+
+CMD ["catalina.sh", "run"]

@@ -95,7 +95,14 @@ find ${tomcatHome}/apache-tomcat-${tomcatVersion} -type d -exec chmod -R 0755 "{
 find ${tomcatHome}/apache-tomcat-${tomcatVersion} -type f -exec chmod -R 0644 "{}" +;
 find ${tomcatHome}/apache-tomcat-${tomcatVersion}/bin/*.sh -type f -exec chmod -R 0755 "{}" +;
 
+echo "變更預設設定: server.xml"
+
+sed -i 's/<Server port="8005" shutdown="SHUTDOWN">/<Server port="-1" shutdown="SHUTDOWN">/g' ${tomcatHome}/apache-tomcat-${tomcatVersion}/conf/server.xml
+sed -i 's/unpackWARs="true"/unpackWARs="false"/g' ${tomcatHome}/apache-tomcat-${tomcatVersion}/conf/server.xml
+sed -i 's/autoDeploy="true"/autoDeploy="false"/g' ${tomcatHome}/apache-tomcat-${tomcatVersion}/conf/server.xml
+sed -i 's/reloadable="true"/reloadable="false"/g' ${tomcatHome}/apache-tomcat-${tomcatVersion}/conf/server.xml
+
 echo "重新打包"
-tar -zcf ${releases}/safety-tomcat-${tomcatVersion}-${toDate}.tar.gz -C ${tomcatHome} apache-tomcat-${tomcatVersion}
+tar -zcf ${releases}/safety-tomcat-${tomcatVersion}.tar.gz -C ${tomcatHome} apache-tomcat-${tomcatVersion}
 
 echo "down!"

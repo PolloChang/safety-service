@@ -10,3 +10,10 @@
 ```bash
 ./safety-tomcat.sh -v 9.0.83
 ```
+
+## docker
+
+
+```bash
+docker inspect --format '{{json .State.Health}}' docker-safety-tomcat-7-jre7-1
+```
