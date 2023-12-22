@@ -2,5 +2,6 @@ releases
 source
 tmp
 *.tar.gz
+*.tar
 *.jar
 webapps
