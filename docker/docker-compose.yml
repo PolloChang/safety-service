@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   glassfish:
+    image: docker-glassfish:1.0
     build:
       context: glassfish
       dockerfile: Dockerfile
@@ -21,6 +22,7 @@ services:
       - /data/conf/jmx/config.yaml:/data/conf/jmx/config.yaml:ro
   
   safety-tomcat-7-jre7:
+    image: docker-safety-tomcat-7-jre7:1.0
     build:
       context: tomcat-7
       dockerfile: Dockerfile-jre7
@@ -37,6 +39,7 @@ services:
       - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
   
   safety-tomcat-9-jre8:
+    image: docker-safety-tomcat-9-jre8:1.0
     build:
       context: tomcat-9
       dockerfile: Dockerfile-jre8
@@ -53,6 +56,7 @@ services:
       - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
 
   safety-tomcat-9-jre17:
+    image: docker-safety-tomcat-9-jre17:1.0
     build:
       context: tomcat-9
       dockerfile: Dockerfile-jre17
@@ -69,6 +73,7 @@ services:
       - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
 
   safety-tomcat-10-jre17:
+    image: docker-safety-tomcat-10-jre17:1.0
     build:
       context: tomcat-10
       dockerfile: Dockerfile-jre17

@@ -3,7 +3,12 @@ MAINTAINER pollochang
 
 ################################################################################
 
-RUN apt-get update && rm -rf /var/lib/apt/lists/*
+RUN apt update;  \
+	apt upgrade -y; \
+  apt install -y curl libfreetype6; \
+  apt-get -y clean all; \
+  dpkg remove -y apt; \
+	rm -rf /var/lib/apt/lists/*;
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8

@@ -29,7 +29,7 @@ ADD safety-tomcat-${TOMCAT_VERSION}.tar.gz /tmp
 RUN mv /tmp/apache-tomcat-${TOMCAT_VERSION}/* ${CATALINA_HOME}
 RUN apt update;  \
 	apt upgrade -y; \
-  apt install -y curl; \
+  apt install -y curl libfreetype6; \
   apt-get -y clean all; \
   dpkg remove -y apt; \
 	rm -rf /var/lib/apt/lists/*;
