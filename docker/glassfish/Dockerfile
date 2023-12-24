@@ -5,7 +5,7 @@ MAINTAINER pollochang
 
 RUN apt update;  \
 	apt upgrade -y; \
-  apt install -y curl libfreetype6; \
+  apt install -y curl libfreetype6 fontconfig; \
   apt-get -y clean all; \
   dpkg remove -y apt; \
 	rm -rf /var/lib/apt/lists/*;
