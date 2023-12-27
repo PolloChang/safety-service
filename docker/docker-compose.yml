@@ -94,5 +94,23 @@ services:
       - ./jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
       - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
 
+  saiku:
+    image: docker-safety-saiku:1.0
+    build:
+      context: saiku
+      dockerfile: Dockerfile
+    environment:
+      TZ: Asia/Taipei
+      CATALINA_OPTS: -server -Xshare:off -Xms1024m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=95 -XX:MaxPermSize=1024m -Dfile.encoding=UTF-8 -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Djava.awt.headless=true
+      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom
+    volumes:
+      - /data/docker-data/saiku/data:/usr/local/saiku-server/data
+      - /data/docker-data/saiku/repository:/usr/local/saiku-server/repository
+      - /data/docker-data/saiku/saiku2:/usr/local/saiku-server/tomcat/webapps/saiku2
+      - /data/docker-data/saiku/saiku2_tpsoc:/usr/local/saiku-server/tomcat/webapps/saiku2_tpsoc
+    ports:
+      - 10050:8080
+      - 10056:8686
+
 volumes:
   report:

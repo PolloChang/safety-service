@@ -5,3 +5,4 @@ tmp
 *.tar
 *.jar
 webapps
+saiku-server
