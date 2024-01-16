@@ -4,5 +4,6 @@ tmp
 *.tar.gz
 *.tar
 *.jar
+*.tgz
 webapps
 saiku-server

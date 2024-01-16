@@ -1,116 +1,131 @@
 version: '3.8'
 
 services:
-  glassfish:
-    image: docker-glassfish:1.1
+  dsm:
+    image: dsm:1.0
     build:
-      context: glassfish
+      context: dsm
       dockerfile: Dockerfile
     restart: always
-    logging:
-        driver: syslog
-        options:
-          tag: swjweb
-          syslog-address: udp://192.168.56.247:1514
-          syslog-format: rfc3164
+    environment:
+      TZ: Asia/Taipei
+      WEB_USER: pollo
+      WEB_PWD: fd831554
     ports:
-      - 20000-20003:8080
-      - 20010-20013:8585
-    volumes:
-      - ./glassfish/conf/domain.xml:/usr/lib/glassfish/domains/domain1/config/domain.xml:ro
-      - /data/conf/jmx/jmx_prometheus_javaagent_java6_latest.jar:/data/conf/jmx/jmx_prometheus_javaagent_java6_latest.jar:ro
-      - /data/conf/jmx/config.yaml:/data/conf/jmx/config.yaml:ro
+      - 11080:11080
+      - 11081:11081
+      - 11082:11082
+
+  # glassfish:
+  #   image: docker-glassfish:1.1
+  #   build:
+  #     context: glassfish
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   logging:
+  #       driver: syslog
+  #       options:
+  #         tag: swjweb
+  #         syslog-address: udp://192.168.56.247:1514
+  #         syslog-format: rfc3164
+  #   ports:
+  #     - 20000-20003:8080
+  #     - 20010-20013:8585
+  #   volumes:
+  #     - ./glassfish/conf/domain.xml:/usr/lib/glassfish/domains/domain1/config/domain.xml:ro
+  #     - /data/conf/jmx/jmx_prometheus_javaagent_java6_latest.jar:/data/conf/jmx/jmx_prometheus_javaagent_java6_latest.jar:ro
+  #     - /data/conf/jmx/config.yaml:/data/conf/jmx/config.yaml:ro
   
-  safety-tomcat-7-jre7:
-    image: docker-safety-tomcat-7-jre7:1.1
-    build:
-      context: tomcat-7
-      dockerfile: Dockerfile-jre7
-    restart: always
-    environment:
-      TZ: Asia/Taipei
-      CATALINA_OPTS: -server -Xshare:off -Xms512m -Xmx2g -XX:MaxPermSize=512m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95 -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -Xloggc:/usr/local/tomcat/logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGC -XX:+PrintHeapAtGC
-      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
-    ports:
-      - 10010:8080
-      - 10016:8686
-    volumes:
-      - ./jmx_prometheus_javaagent-0.18.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
-      - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
+  # safety-tomcat-7-jre7:
+  #   image: docker-safety-tomcat-7-jre7:1.1
+  #   build:
+  #     context: tomcat-7
+  #     dockerfile: Dockerfile-jre7
+  #   restart: always
+  #   environment:
+  #     TZ: Asia/Taipei
+  #     CATALINA_OPTS: -server -Xshare:off -Xms512m -Xmx2g -XX:MaxPermSize=512m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95 -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -Xloggc:/usr/local/tomcat/logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGC -XX:+PrintHeapAtGC
+  #     JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
+  #   ports:
+  #     - 10010:8080
+  #     - 10016:8686
+  #   volumes:
+  #     - ./jmx_prometheus_javaagent-0.18.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
+  #     - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
   
-  safety-tomcat-9-jre8:
-    image: docker-safety-tomcat-9-jre8:1.1
-    build:
-      context: tomcat-9
-      dockerfile: Dockerfile-jre8
-    restart: always
-    ports:
-      - 10020:8080
-      - 10026:8686
-    environment:
-      TZ: Asia/Taipei
-      CATALINA_OPTS: -server -Xshare:off -Xms512m -Xmx1024m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
-      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
-    volumes:
-      - ./jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
-      - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
+  # safety-tomcat-9-jre8:
+  #   image: docker-safety-tomcat-9-jre8:1.1
+  #   build:
+  #     context: tomcat-9
+  #     dockerfile: Dockerfile-jre8
+  #   restart: always
+  #   ports:
+  #     - 10020:8080
+  #     - 10026:8686
+  #   environment:
+  #     TZ: Asia/Taipei
+  #     CATALINA_OPTS: -server -Xshare:off -Xms512m -Xmx1024m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
+  #     JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
+  #   volumes:
+  #     - ./jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
+  #     - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
 
-  safety-tomcat-9-jre17:
-    image: docker-safety-tomcat-9-jre17:1.1
-    build:
-      context: tomcat-9
-      dockerfile: Dockerfile-jre17
-    restart: always
-    ports:
-      - 10030:8080
-      - 10036:8686
-    environment:
-      TZ: Asia/Taipei
-      CATALINA_OPTS: -server -Xshare:off -Xms1048m -Xmx4096m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
-      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
-    volumes:
-      - /data/conf/jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
-      - /data/conf/jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
-      - /data/conf/grails5-tomcat-server.xml:/usr/local/tomcat/conf/server.xml:ro
-      - /data/conf/tomcat-9-context.xml:/usr/local/tomcat/conf/context.xml:ro
-      - /data/webapps/swj3:/usr/local/tomcat/webapps/swj3:ro
-      - report:/home/tomcat/tmp/swj3/report
-      - /data/fonts:/opt/java/openjdk/lib/fonts:ro
+  # safety-tomcat-9-jre17:
+  #   image: docker-safety-tomcat-9-jre17:1.1
+  #   build:
+  #     context: tomcat-9
+  #     dockerfile: Dockerfile-jre17
+  #   restart: always
+  #   ports:
+  #     - 10030:8080
+  #     - 10036:8686
+  #   environment:
+  #     TZ: Asia/Taipei
+  #     CATALINA_OPTS: -server -Xshare:off -Xms1048m -Xmx4096m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
+  #     JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
+  #   volumes:
+  #     - /data/conf/jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
+  #     - /data/conf/jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
+  #     - /data/conf/grails5-tomcat-server.xml:/usr/local/tomcat/conf/server.xml:ro
+  #     - /data/conf/tomcat-9-context.xml:/usr/local/tomcat/conf/context.xml:ro
+  #     - /data/webapps/swj3:/usr/local/tomcat/webapps/swj3:ro
+  #     - report:/home/tomcat/tmp/swj3/report
+  #     - /data/fonts:/opt/java/openjdk/lib/fonts:ro
 
-  safety-tomcat-10-jre17:
-    image: docker-safety-tomcat-10-jre17:1.1
-    build:
-      context: tomcat-10
-      dockerfile: Dockerfile-jre17
-    restart: always
-    ports:
-      - 10040:8080
-      - 10046:8686
-    environment:
-      TZ: Asia/Taipei
-      CATALINA_OPTS: -server -Xshare:off -Xms256m -Xmx512m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
-      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
-    volumes:
-      - ./jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
-      - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
+  # safety-tomcat-10-jre17:
+  #   image: docker-safety-tomcat-10-jre17:1.1
+  #   build:
+  #     context: tomcat-10
+  #     dockerfile: Dockerfile-jre17
+  #   restart: always
+  #   ports:
+  #     - 10040:8080
+  #     - 10046:8686
+  #   environment:
+  #     TZ: Asia/Taipei
+  #     CATALINA_OPTS: -server -Xshare:off -Xms256m -Xmx512m -Djava.net.preferIPv4Stack=true -XX:+EliminateLocks -XX:+UseBiasedLocking -Dstringchararrayaccessor.disabled=true -XX:MaxJavaStackTraceDepth=100 -XX:+UseG1GC -XX:MaxGCPauseMillis=95
+  #     JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom -Duser.timezone=GMT+08 -Dfile.encoding=UTF-8 -Ddb2.jcc.charsetDecoderEncoder=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/dump -javaagent:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar=8686:/usr/local/tomcat/jmx_config.yaml
+  #   volumes:
+  #     - ./jmx_prometheus_javaagent-0.20.0.jar:/usr/local/tomcat/jmx_prometheus_javaagent_latest.jar:ro
+  #     - ./jmx_config.yaml:/usr/local/tomcat/jmx_config.yaml:ro
 
-  saiku:
-    image: docker-safety-saiku:1.0
-    build:
-      context: saiku
-      dockerfile: Dockerfile
-    environment:
-      TZ: Asia/Taipei
-      CATALINA_OPTS: -server -Xshare:off -Xms1024m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=95 -XX:MaxPermSize=1024m -Dfile.encoding=UTF-8 -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Djava.awt.headless=true
-      JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom
-    volumes:
-      - /data/docker-data/saiku/data:/usr/local/saiku-server/data
-      - /data/docker-data/saiku/repository:/usr/local/saiku-server/repository
-      - /data/docker-data/saiku/saiku2:/usr/local/saiku-server/tomcat/webapps/saiku2
-      - /data/docker-data/saiku/saiku2_tpsoc:/usr/local/saiku-server/tomcat/webapps/saiku2_tpsoc
-    ports:
-      - 10050:8080
-      - 10056:8686
+  # saiku:
+  #   image: docker-safety-saiku:1.0
+  #   build:
+  #     context: saiku
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     TZ: Asia/Taipei
+  #     CATALINA_OPTS: -server -Xshare:off -Xms1024m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=95 -XX:MaxPermSize=1024m -Dfile.encoding=UTF-8 -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Djava.awt.headless=true
+  #     JAVA_OPTS: -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom
+  #   volumes:
+  #     - /data/docker-data/saiku/data:/usr/local/saiku-server/data
+  #     - /data/docker-data/saiku/repository:/usr/local/saiku-server/repository
+  #     - /data/docker-data/saiku/saiku2:/usr/local/saiku-server/tomcat/webapps/saiku2
+  #     - /data/docker-data/saiku/saiku2_tpsoc:/usr/local/saiku-server/tomcat/webapps/saiku2_tpsoc
+  #   ports:
+  #     - 10050:8080
+  #     - 10056:8686
 
 volumes:
   report:
