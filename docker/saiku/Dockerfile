@@ -1,4 +1,3 @@
-# FROM frolvlad/alpine-openjdk7
 FROM  debian:11.8-slim
 
 RUN apt update;  \
@@ -8,21 +7,20 @@ RUN apt update;  \
   dpkg remove -y apt; \
 	rm -rf /var/lib/apt/lists/*;
 
-ENV JAVA_HOME /opt/java/openjdk
+ENV JAVA_BASE /usr/local/lib/jvm
+ENV JAVA_HOME ${JAVA_BASE}/jdk1.7.0_80
 ENV PATH $JAVA_HOME/bin:$PATH
 ENV JAVA_VERSION jre-7u80
 ENV PATH $CATALINA_HOME/bin:$PATH
 ENV SAIKU_HOME /usr/local/saiku-server
 
-# ADD ${JAVA_VERSION}-linux-x64.tar.gz ${JAVA_HOME}
+RUN mkdir -p ${JAVA_BASE}
+
+ADD jdk-7u80-linux-x64.tar.gz ${JAVA_BASE}
 
 COPY saiku-server /usr/local/saiku-server
 
-ENV JAVA_VERSION_1 8u392
-ENV JAVA_VERSION_2 b08
 RUN mkdir -p ${JAVA_HOME}
-ADD OpenJDK8U-jre_x64_linux_hotspot_${JAVA_VERSION_1}${JAVA_VERSION_2}.tar.gz /tmp
-RUN mv /tmp/jdk${JAVA_VERSION_1}-${JAVA_VERSION_2}-jre/* ${JAVA_HOME}
 
 
 RUN groupadd -g 1500 saiku
